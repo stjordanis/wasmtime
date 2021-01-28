@@ -120,9 +120,6 @@ mod wasi_tests {
 
         writeln!(out, "    #[test]")?;
         let test_fn_name = stemstr.replace("-", "_");
-        if ignore(testsuite, &test_fn_name) {
-            writeln!(out, "    #[ignore]")?;
-        }
         writeln!(out, "    fn r#{}() -> anyhow::Result<()> {{", test_fn_name,)?;
         writeln!(out, "        setup_log();")?;
         writeln!(
@@ -157,38 +154,6 @@ mod wasi_tests {
         writeln!(out, "    }}")?;
         writeln!(out)?;
         Ok(())
-    }
-
-    cfg_if::cfg_if! {
-        if #[cfg(not(windows))] {
-            /// Ignore tests that aren't supported yet.
-            fn ignore(testsuite: &str, name: &str) -> bool {
-                if testsuite == "wasi-tests" {
-                    false
-                } else {
-                    unreachable!()
-                }
-            }
-        } else {
-            /// Ignore tests that aren't supported yet.
-            fn ignore(testsuite: &str, name: &str) -> bool {
-                if testsuite == "wasi-tests" {
-                    false
-                        /*
-                    match name {
-                        "readlink_no_buffer" => true,
-                        "dangling_symlink" => true,
-                        "symlink_loop" => true,
-                        "truncation_rights" => true,
-                        "dangling_fd" => true,
-                        _ => false,
-                    }
-                        */
-                } else {
-                    unreachable!()
-                }
-            }
-        }
     }
 
     /// Mark tests which do not require preopens
